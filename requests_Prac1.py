@@ -1,3 +1,5 @@
+import random
+
 import requests
 headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36"}
 response = requests.get("https://kdtx-test.itheima.net/api/captchaImage",headers = headers)
@@ -28,3 +30,26 @@ res_upload = requests.post("https://kdtx-test.itheima.net/api/common/upload", he
     "test.txt", "rb")})
 file_name = res_upload.json().get("fileName")
 print(f"上传成功，服务器文件名：{file_name}")
+print("\n----------开始新增合同---------")
+#生成随机的合同编号
+random_num = random.randint(100000,999999)
+contract_no = f"HT101014{random_num}"
+print(f"自动生成的合同编号:{contract_no}")
+#组装新增合同的参数
+add_contract_data = {
+    "name":"Jing的联调测试合同",
+    "phone":"13610145001",
+    "contractNo":contract_no,#随即生成的唯一编号
+    "subject":"6",
+    "courseId":course_id,#动态课程ID
+    "channel":"0",
+    "activityId":77,
+    "fileName":file_name#上传文件拿到的真实文件名
+}
+#发送post请求
+res_add_contract = requests.post("https://kdtx-test.itheima.net/api/contract",headers=header_data,json=add_contract_data)
+#打印结果
+print(f"新增合同状态：{res_add_contract.status_code}")
+print(f"新增合同返回数据：{res_add_contract.json()}")
+if res_add_contract.json().get("code")==200:
+    print("完美！整个业务流闭环彻底打通！")
